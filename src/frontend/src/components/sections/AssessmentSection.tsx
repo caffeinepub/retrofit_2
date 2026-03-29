@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 import {
   AlertTriangle,
   Anchor,
@@ -11,6 +12,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Columns,
+  ExternalLink,
+  Info,
   Layers,
   LayoutGrid,
   RefreshCw,
@@ -63,6 +66,8 @@ function analyzeRebound(rn: number) {
       color: "text-green-400",
       bg: "bg-green-400/10 border-green-400/30",
       level: 4,
+      reason:
+        "A Rebound Number ≥ 40 indicates a dense, well-hydrated cement matrix with high surface hardness. This correlates with a compressive strength typically exceeding 40 MPa (M40 or above), signifying excellent structural performance.",
     };
   if (rn >= 30)
     return {
@@ -70,6 +75,8 @@ function analyzeRebound(rn: number) {
       color: "text-emerald-400",
       bg: "bg-emerald-400/10 border-emerald-400/30",
       level: 3,
+      reason:
+        "RN of 30–40 reflects a moderately strong concrete matrix, typically corresponding to M25–M40 grade. Surface integrity is satisfactory, though minor internal micro-cracking may be present. Structural capacity is generally adequate.",
     };
   if (rn >= 20)
     return {
@@ -77,12 +84,16 @@ function analyzeRebound(rn: number) {
       color: "text-yellow-400",
       bg: "bg-yellow-400/10 border-yellow-400/30",
       level: 2,
+      reason:
+        "RN between 20–30 suggests reduced compressive strength, likely below M20 grade. The concrete may have experienced degradation, poor curing, or carbonation-induced softening. Structural load capacity may be compromised and warrants further investigation.",
     };
   return {
     label: "Poor",
     color: "text-red-400",
     bg: "bg-red-400/10 border-red-400/30",
     level: 1,
+    reason:
+      "RN below 20 indicates severely deteriorated or very weak concrete (below M15). This level of surface hardness suggests extensive internal cracking, advanced carbonation, or significant chemical/physical degradation. Immediate structural intervention is warranted.",
   };
 }
 
@@ -93,6 +104,8 @@ function analyzeUPV(v: number) {
       color: "text-green-400",
       bg: "bg-green-400/10 border-green-400/30",
       level: 4,
+      reason:
+        "UPV ≥ 4.5 km/s indicates a dense, homogeneous, and void-free concrete structure. Sound wave travels at maximum speed confirming absence of internal cracks, delamination, or honeycombing. The concrete is in excellent condition.",
     };
   if (v >= 3.5)
     return {
@@ -100,6 +113,8 @@ function analyzeUPV(v: number) {
       color: "text-emerald-400",
       bg: "bg-emerald-400/10 border-emerald-400/30",
       level: 3,
+      reason:
+        "UPV of 3.5–4.5 km/s shows good concrete uniformity with minor imperfections. Some micro-voids or hairline cracks may exist but overall structural integrity is maintained. Routine monitoring is advisable.",
     };
   if (v >= 3.0)
     return {
@@ -107,12 +122,16 @@ function analyzeUPV(v: number) {
       color: "text-yellow-400",
       bg: "bg-yellow-400/10 border-yellow-400/30",
       level: 2,
+      reason:
+        "UPV between 3.0–3.5 km/s suggests moderate concrete quality with visible internal discontinuities such as cracks or voids. This indicates a reduction in structural stiffness and possible moisture ingress pathways.",
     };
   return {
     label: "Poor",
     color: "text-red-400",
     bg: "bg-red-400/10 border-red-400/30",
     level: 1,
+    reason:
+      "UPV below 3.0 km/s points to severely cracked, honeycombed, or delaminated concrete with significant internal discontinuities. Sound pulse is severely attenuated, indicating loss of structural cohesion. Major retrofitting is required.",
   };
 }
 
@@ -123,6 +142,8 @@ function analyzeHalfCell(mv: number) {
       color: "text-green-400",
       bg: "bg-green-400/10 border-green-400/30",
       level: 3,
+      reason:
+        "A potential more positive than -200 mV (vs CSE) indicates passive oxide film on rebar is intact. The electrochemical environment is non-aggressive and there is a 90% probability that no active corrosion is occurring per ASTM C876.",
     };
   if (mv >= -350)
     return {
@@ -130,12 +151,16 @@ function analyzeHalfCell(mv: number) {
       color: "text-yellow-400",
       bg: "bg-yellow-400/10 border-yellow-400/30",
       level: 2,
+      reason:
+        "Potential in the range -200 to -350 mV falls in the uncertain corrosion zone per ASTM C876. The protective passive film on rebar may be partially broken down. Active corrosion cannot be ruled out and further investigation (e.g. resistivity measurement) is recommended.",
     };
   return {
     label: "90% Corrosion",
     color: "text-red-400",
     bg: "bg-red-400/10 border-red-400/30",
     level: 1,
+    reason:
+      "A potential more negative than -350 mV indicates a 90% probability of active corrosion per ASTM C876. The passive oxide film has broken down, allowing anodic dissolution of rebar steel. This leads to expansive rust products that crack the surrounding concrete cover.",
   };
 }
 
@@ -146,6 +171,7 @@ function analyzeCarbonation(depth: number, cover: number) {
       color: "text-green-400",
       bg: "bg-green-400/10 border-green-400/30",
       level: 3,
+      reason: `Carbonation front (${depth} mm) has not reached the rebar cover (${cover} mm). The alkaline environment (pH > 11) surrounding the reinforcement is preserved, maintaining the passive protective film on rebar surface. No corrosion risk from carbonation at this stage.`,
     };
   if (depth === cover)
     return {
@@ -153,12 +179,14 @@ function analyzeCarbonation(depth: number, cover: number) {
       color: "text-yellow-400",
       bg: "bg-yellow-400/10 border-yellow-400/30",
       level: 2,
+      reason: `Carbonation depth (${depth} mm) has reached the rebar cover level (${cover} mm). The pH at the rebar surface has dropped to ~8.5, destabilising the passive film. Corrosion initiation is imminent. Immediate protective intervention is recommended.`,
     };
   return {
     label: "High Risk",
     color: "text-red-400",
     bg: "bg-red-400/10 border-red-400/30",
     level: 1,
+    reason: `Carbonation front (${depth} mm) has penetrated beyond the rebar cover (${cover} mm). The alkalinity at rebar level has been neutralised (pH < 9), depassivating the steel. Active corrosion is highly likely with consequential cover cracking and structural section loss.`,
   };
 }
 
@@ -169,32 +197,155 @@ interface Results {
   carbonation?: ReturnType<typeof analyzeCarbonation>;
 }
 
-function getRecommendation(selected: string[], results: Results) {
-  const hasRebound = selected.includes("rebound");
-  const hasUPV = selected.includes("upv");
-  const hasHalfCell = selected.includes("halfcell");
-  const hasCarbonation = selected.includes("carbonation");
+function getOverallAssessment(selected: string[], results: Results) {
+  const hasStrength = selected.includes("rebound") || selected.includes("upv");
+  const hasCorrosion =
+    selected.includes("halfcell") || selected.includes("carbonation");
 
   const strengthLevel = Math.min(
-    hasRebound ? (results.rebound?.level ?? 4) : 4,
-    hasUPV ? (results.upv?.level ?? 4) : 4,
+    selected.includes("rebound") ? (results.rebound?.level ?? 4) : 4,
+    selected.includes("upv") ? (results.upv?.level ?? 4) : 4,
   );
 
   const corrosionLevel = Math.min(
-    hasHalfCell ? (results.halfcell?.level ?? 3) : 3,
-    hasCarbonation ? (results.carbonation?.level ?? 3) : 3,
+    selected.includes("halfcell") ? (results.halfcell?.level ?? 3) : 3,
+    selected.includes("carbonation") ? (results.carbonation?.level ?? 3) : 3,
   );
 
+  // Concrete Strength Condition
+  let strengthCondition = "Not Assessed";
+  let strengthReason = "No strength-related tests were selected.";
+  if (hasStrength) {
+    if (strengthLevel >= 4) {
+      strengthCondition = "Very Good";
+      strengthReason =
+        "NDT results confirm high surface hardness and excellent concrete homogeneity, indicating the concrete retains its design strength.";
+    } else if (strengthLevel === 3) {
+      strengthCondition = "Good";
+      strengthReason =
+        "Test results indicate satisfactory concrete quality with adequate strength for its intended purpose.";
+    } else if (strengthLevel === 2) {
+      strengthCondition = "Fair";
+      strengthReason =
+        "Concrete shows signs of degradation. Strength may be below design requirements, warranting structural review.";
+    } else {
+      strengthCondition = "Poor";
+      strengthReason =
+        "Concrete is severely degraded. Structural load capacity is significantly compromised and immediate action is required.";
+    }
+  }
+
+  // Durability Condition
+  let durabilityCondition = "Not Assessed";
+  let durabilityReason = "No durability-related tests were selected.";
+  if (hasCorrosion) {
+    if (corrosionLevel === 3) {
+      durabilityCondition = "Durable";
+      durabilityReason =
+        "No significant carbonation or electrochemical corrosion risk detected. The structure is expected to perform adequately over its service life.";
+    } else if (corrosionLevel === 2) {
+      durabilityCondition = "Marginal";
+      durabilityReason =
+        "Early-stage corrosion risk detected. The protective environment for rebar is partially compromised. Preventive measures are advisable.";
+    } else {
+      durabilityCondition = "Poor";
+      durabilityReason =
+        "Severe corrosion risk confirmed. Rebar depassivation is underway or complete. Structural durability is critically compromised.";
+    }
+  }
+
+  // Corrosion Status
+  let corrosionStatus = "Not Assessed";
+  let corrosionReason = "No corrosion tests selected.";
+  if (hasCorrosion) {
+    if (corrosionLevel === 3) {
+      corrosionStatus = "No Active Corrosion";
+      corrosionReason =
+        "Electrochemical readings and/or carbonation measurements confirm passive rebar conditions. Corrosion is not initiated.";
+    } else if (corrosionLevel === 2) {
+      corrosionStatus = "Uncertain / Possible";
+      corrosionReason =
+        "Test results fall in the uncertain corrosion zone. The passive film may be weakening. Active corrosion cannot be excluded and requires monitoring.";
+    } else {
+      corrosionStatus = "Active Corrosion Probable";
+      corrosionReason =
+        "Test results confirm a high probability of active corrosion. Expansive corrosion products will cause cracking, cover spalling and loss of rebar cross-section over time.";
+    }
+  }
+
+  // Overall Health
+  const overallLevel = Math.min(strengthLevel, corrosionLevel);
+  let overallHealth = "Satisfactory";
+  let overallColor = "text-green-400";
+  let overallBg = "bg-green-400/10 border-green-400/30";
+  let overallReason = "";
+  if (overallLevel >= 3) {
+    overallHealth = "Satisfactory";
+    overallColor = "text-green-400";
+    overallBg = "bg-green-400/10 border-green-400/30";
+    overallReason =
+      "The structure shows good overall health. Routine maintenance and periodic inspection are recommended to sustain performance.";
+  } else if (overallLevel === 2) {
+    overallHealth = "Moderate Concern";
+    overallColor = "text-yellow-400";
+    overallBg = "bg-yellow-400/10 border-yellow-400/30";
+    overallReason =
+      "The structure exhibits signs of deterioration. Prompt remedial action is advised to prevent escalation to a critical condition.";
+  } else {
+    overallHealth = "Critical";
+    overallColor = "text-red-400";
+    overallBg = "bg-red-400/10 border-red-400/30";
+    overallReason =
+      "The structure is in a critical condition with combined strength loss and corrosion damage. Immediate structural intervention is mandatory to ensure safety.";
+  }
+
+  // Recommendation
+  let recommendation = "none";
+  let recJustification = "";
   if (strengthLevel >= 3 && corrosionLevel === 3) {
-    return "none";
+    recommendation = "none";
+    recJustification =
+      "Both structural strength and durability indicators are satisfactory. No immediate retrofitting is required. Minor cosmetic or surface repairs can be performed as preventive maintenance. A re-assessment is recommended every 3–5 years.";
+  } else if (
+    (strengthLevel === 2 || strengthLevel === 1) &&
+    (corrosionLevel === 2 || corrosionLevel === 1)
+  ) {
+    recommendation = "jacketing";
+    recJustification =
+      "Combined low structural strength and confirmed/probable corrosion indicates that the structure has lost a significant portion of its load-carrying capacity. RC Jacketing (adding reinforced concrete around existing elements) restores both strength and stiffness while encapsulating corroded reinforcement.";
+  } else if (strengthLevel <= 1 && corrosionLevel === 3) {
+    recommendation = "jacketing";
+    recJustification =
+      "Very poor concrete strength despite limited corrosion requires full structural restoration. RC Jacketing increases section dimensions and adds fresh reinforcement to restore the designed load capacity.";
+  } else if (strengthLevel >= 3 && corrosionLevel === 1) {
+    recommendation = "frp";
+    recJustification =
+      "Structural strength is adequate but severe corrosion is detected. FRP (Fibre Reinforced Polymer) wrapping provides confinement pressure that arrests corrosion-induced cracking, prevents further concrete spalling, and increases ductility without major section enlargement.";
+  } else if (strengthLevel >= 2 && corrosionLevel === 2) {
+    recommendation = "surface";
+    recJustification =
+      "Moderate strength with early-stage corrosion risk is best addressed by surface repair — removing carbonated/contaminated concrete, patch repair with polymer-modified mortar, and applying an anti-carbonation protective coating to re-establish a protective barrier over the rebar.";
+  } else {
+    // fallback
+    recommendation = "surface";
+    recJustification =
+      "Available test results suggest moderate deterioration. Surface repair combined with protective coating treatment is recommended as an initial intervention.";
   }
-  if (strengthLevel <= 2 || corrosionLevel === 1) {
-    return "jacketing";
-  }
-  if (strengthLevel >= 3 && corrosionLevel === 1) {
-    return "frp";
-  }
-  return "surface";
+
+  return {
+    strengthCondition,
+    strengthReason,
+    durabilityCondition,
+    durabilityReason,
+    corrosionStatus,
+    corrosionReason,
+    overallHealth,
+    overallColor,
+    overallBg,
+    overallReason,
+    recommendation,
+    recJustification,
+  };
 }
 
 export default function AssessmentSection() {
@@ -208,7 +359,9 @@ export default function AssessmentSection() {
     carbonCover: "",
   });
   const [results, setResults] = useState<Results>({});
-  const [recommendation, setRecommendation] = useState("");
+  const [overall, setOverall] = useState<ReturnType<
+    typeof getOverallAssessment
+  > | null>(null);
 
   const toggleTest = (id: string) => {
     setSelectedTests((prev) =>
@@ -238,7 +391,7 @@ export default function AssessmentSection() {
       );
     }
     setResults(r);
-    setRecommendation(getRecommendation(selectedTests, r));
+    setOverall(getOverallAssessment(selectedTests, r));
     setStep(3);
   };
 
@@ -253,10 +406,15 @@ export default function AssessmentSection() {
       carbonCover: "",
     });
     setResults({});
-    setRecommendation("");
+    setOverall(null);
   };
 
-  const steps = ["Select Tests", "Input Values", "Results", "Recommendations"];
+  const steps = [
+    "Select Tests",
+    "Input Values",
+    "Technical Results",
+    "Recommendations",
+  ];
 
   return (
     <div className="min-h-full px-6 lg:px-12 py-10">
@@ -277,19 +435,16 @@ export default function AssessmentSection() {
             <div key={s} className="flex items-center gap-1 shrink-0">
               <div
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all
-                  ${
-                    step === i + 1
-                      ? "bg-primary/20 text-primary border border-primary/40"
-                      : step > i + 1
-                        ? "bg-primary/10 text-primary/70 border border-primary/20"
-                        : "bg-muted/50 text-muted-foreground border border-border/40"
-                  }
-                `}
+                ${
+                  step === i + 1
+                    ? "bg-primary/20 text-primary border border-primary/40"
+                    : step > i + 1
+                      ? "bg-primary/10 text-primary/70 border border-primary/20"
+                      : "bg-muted/50 text-muted-foreground border border-border/40"
+                }`}
               >
                 <span
-                  className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold
-                  ${step > i + 1 ? "bg-primary/30" : ""}
-                `}
+                  className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${step > i + 1 ? "bg-primary/30" : ""}`}
                 >
                   {step > i + 1 ? "✓" : i + 1}
                 </span>
@@ -303,7 +458,7 @@ export default function AssessmentSection() {
         </div>
 
         <AnimatePresence mode="wait">
-          {/* Step 1: Select Tests */}
+          {/* Step 1 */}
           {step === 1 && (
             <motion.div
               key="step1"
@@ -322,13 +477,11 @@ export default function AssessmentSection() {
                     key={test.id}
                     data-ocid={`assessment.${test.id}.toggle`}
                     onClick={() => toggleTest(test.id)}
-                    className={`text-left p-4 rounded-lg border transition-all duration-200
-                      ${
-                        selectedTests.includes(test.id)
-                          ? "bg-primary/10 border-primary/40 glow-teal"
-                          : "bg-card border-border/50 hover:border-border"
-                      }
-                    `}
+                    className={`text-left p-4 rounded-lg border transition-all duration-200 ${
+                      selectedTests.includes(test.id)
+                        ? "bg-primary/10 border-primary/40 glow-teal"
+                        : "bg-card border-border/50 hover:border-border"
+                    }`}
                   >
                     <div className="flex items-start gap-3">
                       <Checkbox
@@ -362,13 +515,12 @@ export default function AssessmentSection() {
                 onClick={() => setStep(2)}
                 className="gap-2 bg-primary text-primary-foreground"
               >
-                Next: Input Values
-                <ChevronRight className="w-4 h-4" />
+                Next: Input Values <ChevronRight className="w-4 h-4" />
               </Button>
             </motion.div>
           )}
 
-          {/* Step 2: Input Values */}
+          {/* Step 2 */}
           {step === 2 && (
             <motion.div
               key="step2"
@@ -498,7 +650,7 @@ export default function AssessmentSection() {
                         </div>
                         <div className="space-y-1">
                           <Label className="text-xs text-muted-foreground">
-                            Rebar Cover (mm)
+                            Concrete Cover (mm)
                           </Label>
                           <Input
                             type="number"
@@ -533,15 +685,14 @@ export default function AssessmentSection() {
                   onClick={runAnalysis}
                   className="gap-2 bg-primary text-primary-foreground"
                 >
-                  Run Analysis
-                  <ChevronRight className="w-4 h-4" />
+                  Run Analysis <ChevronRight className="w-4 h-4" />
                 </Button>
               </div>
             </motion.div>
           )}
 
-          {/* Step 3: Results */}
-          {step === 3 && (
+          {/* Step 3: Technical Results */}
+          {step === 3 && overall && (
             <motion.div
               key="step3"
               initial={{ opacity: 0, x: 20 }}
@@ -549,82 +700,168 @@ export default function AssessmentSection() {
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.25 }}
             >
-              <h2 className="font-display text-xl font-semibold mb-4">
-                Analysis Results
+              <h2 className="font-display text-xl font-semibold mb-2">
+                Technical Analysis Results
               </h2>
-              <div
-                className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8"
-                data-ocid="assessment.results.panel"
-              >
+              <p className="text-muted-foreground text-sm mb-6">
+                Individual test findings and technical interpretation.
+              </p>
+
+              {/* Individual Test Results */}
+              <div className="space-y-4 mb-8">
                 {results.rebound && (
                   <Card className={`border ${results.rebound.bg}`}>
                     <CardContent className="p-5">
-                      <p className="text-xs text-muted-foreground mb-1">
-                        Rebound Hammer (IS 13311-2)
-                      </p>
-                      <p
-                        className={`font-display text-2xl font-bold ${results.rebound.color}`}
-                      >
-                        {results.rebound.label}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Concrete Strength Quality
-                      </p>
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                          Rebound Hammer — IS 13311 Part 2
+                        </p>
+                        <Badge
+                          className={`${results.rebound.color} border ${results.rebound.bg} text-xs font-bold`}
+                        >
+                          {results.rebound.label}
+                        </Badge>
+                      </div>
+                      <div className="flex items-start gap-2 mt-2">
+                        <Info className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          {results.rebound.reason}
+                        </p>
+                      </div>
                     </CardContent>
                   </Card>
                 )}
                 {results.upv && (
                   <Card className={`border ${results.upv.bg}`}>
                     <CardContent className="p-5">
-                      <p className="text-xs text-muted-foreground mb-1">
-                        UPV Test (IS 13311-1)
-                      </p>
-                      <p
-                        className={`font-display text-2xl font-bold ${results.upv.color}`}
-                      >
-                        {results.upv.label}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Concrete Homogeneity
-                      </p>
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                          UPV Test — IS 13311 Part 1
+                        </p>
+                        <Badge
+                          className={`${results.upv.color} border ${results.upv.bg} text-xs font-bold`}
+                        >
+                          {results.upv.label}
+                        </Badge>
+                      </div>
+                      <div className="flex items-start gap-2 mt-2">
+                        <Info className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          {results.upv.reason}
+                        </p>
+                      </div>
                     </CardContent>
                   </Card>
                 )}
                 {results.halfcell && (
                   <Card className={`border ${results.halfcell.bg}`}>
                     <CardContent className="p-5">
-                      <p className="text-xs text-muted-foreground mb-1">
-                        Half Cell Potential (ASTM C876)
-                      </p>
-                      <p
-                        className={`font-display text-2xl font-bold ${results.halfcell.color}`}
-                      >
-                        {results.halfcell.label}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Corrosion Probability
-                      </p>
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                          Half Cell Potential — ASTM C876
+                        </p>
+                        <Badge
+                          className={`${results.halfcell.color} border ${results.halfcell.bg} text-xs font-bold`}
+                        >
+                          {results.halfcell.label}
+                        </Badge>
+                      </div>
+                      <div className="flex items-start gap-2 mt-2">
+                        <Info className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          {results.halfcell.reason}
+                        </p>
+                      </div>
                     </CardContent>
                   </Card>
                 )}
                 {results.carbonation && (
                   <Card className={`border ${results.carbonation.bg}`}>
                     <CardContent className="p-5">
-                      <p className="text-xs text-muted-foreground mb-1">
-                        Carbonation Test (IS 516)
-                      </p>
-                      <p
-                        className={`font-display text-2xl font-bold ${results.carbonation.color}`}
-                      >
-                        {results.carbonation.label}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Carbonation vs Cover
-                      </p>
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                          Carbonation Test — IS 516
+                        </p>
+                        <Badge
+                          className={`${results.carbonation.color} border ${results.carbonation.bg} text-xs font-bold`}
+                        >
+                          {results.carbonation.label}
+                        </Badge>
+                      </div>
+                      <div className="flex items-start gap-2 mt-2">
+                        <Info className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          {results.carbonation.reason}
+                        </p>
+                      </div>
                     </CardContent>
                   </Card>
                 )}
               </div>
+
+              <Separator className="mb-6" />
+
+              {/* Overall Summary */}
+              <h3 className="font-display text-base font-semibold mb-4">
+                Overall Structural Evaluation
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+                <Card className="bg-card border-border/60">
+                  <CardContent className="p-4">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
+                      Concrete Strength Condition
+                    </p>
+                    <p className="font-semibold text-sm mb-1">
+                      {overall.strengthCondition}
+                    </p>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      {overall.strengthReason}
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-card border-border/60">
+                  <CardContent className="p-4">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
+                      Durability Condition
+                    </p>
+                    <p className="font-semibold text-sm mb-1">
+                      {overall.durabilityCondition}
+                    </p>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      {overall.durabilityReason}
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-card border-border/60">
+                  <CardContent className="p-4">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
+                      Corrosion Status
+                    </p>
+                    <p className="font-semibold text-sm mb-1">
+                      {overall.corrosionStatus}
+                    </p>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      {overall.corrosionReason}
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card className={`border ${overall.overallBg}`}>
+                  <CardContent className="p-4">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
+                      Overall Structural Health
+                    </p>
+                    <p
+                      className={`font-bold text-sm mb-1 ${overall.overallColor}`}
+                    >
+                      {overall.overallHealth}
+                    </p>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      {overall.overallReason}
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+
               <div className="flex gap-3">
                 <Button
                   variant="outline"
@@ -639,15 +876,14 @@ export default function AssessmentSection() {
                   onClick={() => setStep(4)}
                   className="gap-2 bg-primary text-primary-foreground"
                 >
-                  View Recommendations
-                  <ChevronRight className="w-4 h-4" />
+                  View Recommendations <ChevronRight className="w-4 h-4" />
                 </Button>
               </div>
             </motion.div>
           )}
 
           {/* Step 4: Recommendations */}
-          {step === 4 && (
+          {step === 4 && overall && (
             <motion.div
               key="step4"
               initial={{ opacity: 0, x: 20 }}
@@ -655,154 +891,213 @@ export default function AssessmentSection() {
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.25 }}
             >
-              <h2 className="font-display text-xl font-semibold mb-4">
-                Retrofit Recommendations
+              <h2 className="font-display text-xl font-semibold mb-2">
+                Retrofit Recommendation
               </h2>
+              <p className="text-muted-foreground text-sm mb-6">
+                Based on combined NDT assessment results.
+              </p>
 
-              {recommendation === "none" && (
+              {/* No Retrofit */}
+              {overall.recommendation === "none" && (
                 <Card className="bg-green-400/10 border-green-400/30 mb-6">
-                  <CardContent className="p-6 flex items-start gap-4">
-                    <CheckCircle2 className="w-8 h-8 text-green-400 shrink-0 mt-0.5" />
-                    <div>
-                      <h3 className="font-display text-xl font-bold text-green-400 mb-1">
-                        No Retrofitting Required
-                      </h3>
-                      <p className="text-muted-foreground text-sm">
-                        Structure is in good condition. Minor surface repairs
-                        and preventive maintenance may be carried out as a
-                        precaution. Schedule re-assessment in 3–5 years.
-                      </p>
+                  <CardContent className="p-6">
+                    <div className="flex items-start gap-4 mb-4">
+                      <CheckCircle2 className="w-8 h-8 text-green-400 shrink-0 mt-0.5" />
+                      <div>
+                        <h3 className="font-display text-xl font-bold text-green-400 mb-1">
+                          No Retrofitting Required
+                        </h3>
+                        <Badge className="bg-green-400/15 text-green-400 border-green-400/30 text-xs mb-3">
+                          Case 1: Good Strength + No Corrosion
+                        </Badge>
+                        <p className="text-muted-foreground text-sm">
+                          {overall.recJustification}
+                        </p>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
               )}
 
-              {recommendation === "jacketing" && (
-                <div className="space-y-4 mb-6">
-                  <Card className="bg-red-400/10 border-red-400/30">
-                    <CardContent className="p-6 flex items-start gap-4">
+              {/* Surface Repair */}
+              {overall.recommendation === "surface" && (
+                <Card className="bg-yellow-400/10 border-yellow-400/30 mb-6">
+                  <CardContent className="p-6">
+                    <div className="flex items-start gap-4">
+                      <AlertTriangle className="w-8 h-8 text-yellow-400 shrink-0 mt-0.5" />
+                      <div>
+                        <h3 className="font-display text-xl font-bold text-yellow-400 mb-1">
+                          Surface Repair + Protective Coating
+                        </h3>
+                        <Badge className="bg-yellow-400/15 text-yellow-400 border-yellow-400/30 text-xs mb-3">
+                          Case 2: Moderate Strength + Initial Corrosion
+                        </Badge>
+                        <p className="text-muted-foreground text-sm">
+                          {overall.recJustification}
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* RC Jacketing */}
+              {overall.recommendation === "jacketing" && (
+                <Card className="bg-red-400/10 border-red-400/30 mb-6">
+                  <CardContent className="p-6">
+                    <div className="flex items-start gap-4 mb-5">
                       <XCircle className="w-8 h-8 text-red-400 shrink-0 mt-0.5" />
                       <div>
                         <h3 className="font-display text-xl font-bold text-red-400 mb-1">
                           RC Jacketing Recommended
                         </h3>
-                        <p className="text-muted-foreground text-sm mb-4">
-                          Structural strength is below acceptable limits and/or
-                          significant corrosion detected. RC jacketing of
-                          columns, beams, or footings is recommended to restore
-                          structural integrity.
+                        <Badge className="bg-red-400/15 text-red-400 border-red-400/30 text-xs mb-3">
+                          Case 4: Poor Strength + High Corrosion
+                        </Badge>
+                        <p className="text-muted-foreground text-sm">
+                          {overall.recJustification}
                         </p>
-                        <div className="flex flex-wrap gap-2">
-                          <a
-                            href={TOOL_URLS.columnJacket}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <Button
-                              size="sm"
-                              className="gap-2 bg-primary text-primary-foreground"
-                              data-ocid="assessment.column_jacket.button"
-                            >
-                              <LayoutGrid className="w-4 h-4" /> Column
-                              Jacketing
-                            </Button>
-                          </a>
-                          <a
-                            href={TOOL_URLS.beamJacket}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <Button
-                              size="sm"
-                              className="gap-2 bg-primary text-primary-foreground"
-                              data-ocid="assessment.beam_jacket.button"
-                            >
-                              <Layers className="w-4 h-4" /> Beam Jacketing
-                            </Button>
-                          </a>
-                          <a
-                            href={TOOL_URLS.footingJacket}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <Button
-                              size="sm"
-                              className="gap-2 bg-primary text-primary-foreground"
-                              data-ocid="assessment.footing.button"
-                            >
-                              <Anchor className="w-4 h-4" /> Footing Design
-                            </Button>
-                          </a>
-                        </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                </div>
+                    </div>
+                    <Separator className="mb-5 border-red-400/20" />
+                    <p className="text-sm font-semibold mb-3">
+                      Select Structural Element for Jacketing Design:
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <a
+                        href={TOOL_URLS.columnJacket}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block"
+                      >
+                        <div className="p-4 rounded-lg border border-red-400/30 bg-red-400/5 hover:bg-red-400/10 hover:border-red-400/50 transition-all cursor-pointer group">
+                          <LayoutGrid className="w-6 h-6 text-red-400 mb-2" />
+                          <p className="font-semibold text-sm mb-1">
+                            Column Jacketing
+                          </p>
+                          <p className="text-xs text-muted-foreground mb-3">
+                            RC jacket design for axially loaded columns per IS
+                            456
+                          </p>
+                          <div className="flex items-center gap-1 text-xs text-red-400 font-medium">
+                            Open Design Module{" "}
+                            <ExternalLink className="w-3 h-3" />
+                          </div>
+                        </div>
+                      </a>
+                      <a
+                        href={TOOL_URLS.beamJacket}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block"
+                      >
+                        <div className="p-4 rounded-lg border border-red-400/30 bg-red-400/5 hover:bg-red-400/10 hover:border-red-400/50 transition-all cursor-pointer group">
+                          <Layers className="w-6 h-6 text-red-400 mb-2" />
+                          <p className="font-semibold text-sm mb-1">
+                            Beam Jacketing
+                          </p>
+                          <p className="text-xs text-muted-foreground mb-3">
+                            RC jacket design for flexural beams with full
+                            detailing
+                          </p>
+                          <div className="flex items-center gap-1 text-xs text-red-400 font-medium">
+                            Open Design Module{" "}
+                            <ExternalLink className="w-3 h-3" />
+                          </div>
+                        </div>
+                      </a>
+                      <a
+                        href={TOOL_URLS.footingJacket}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block"
+                      >
+                        <div className="p-4 rounded-lg border border-red-400/30 bg-red-400/5 hover:bg-red-400/10 hover:border-red-400/50 transition-all cursor-pointer group">
+                          <Anchor className="w-6 h-6 text-red-400 mb-2" />
+                          <p className="font-semibold text-sm mb-1">
+                            Footing Jacketing
+                          </p>
+                          <p className="text-xs text-muted-foreground mb-3">
+                            Footing enlargement and reinforcement design per IS
+                            456
+                          </p>
+                          <div className="flex items-center gap-1 text-xs text-red-400 font-medium">
+                            Open Design Module{" "}
+                            <ExternalLink className="w-3 h-3" />
+                          </div>
+                        </div>
+                      </a>
+                    </div>
+                  </CardContent>
+                </Card>
               )}
 
-              {recommendation === "frp" && (
-                <div className="space-y-4 mb-6">
-                  <Card className="bg-yellow-400/10 border-yellow-400/30">
-                    <CardContent className="p-6 flex items-start gap-4">
-                      <AlertTriangle className="w-8 h-8 text-yellow-400 shrink-0 mt-0.5" />
+              {/* FRP */}
+              {overall.recommendation === "frp" && (
+                <Card className="bg-orange-400/10 border-orange-400/30 mb-6">
+                  <CardContent className="p-6">
+                    <div className="flex items-start gap-4 mb-5">
+                      <AlertTriangle className="w-8 h-8 text-orange-400 shrink-0 mt-0.5" />
                       <div>
-                        <h3 className="font-display text-xl font-bold text-yellow-400 mb-1">
+                        <h3 className="font-display text-xl font-bold text-orange-400 mb-1">
                           FRP Wrapping Recommended
                         </h3>
-                        <p className="text-muted-foreground text-sm mb-4">
-                          Structural strength is adequate but high corrosion
-                          potential detected. Fibre Reinforced Polymer (FRP)
-                          wrapping is recommended to arrest corrosion and
-                          provide confinement.
+                        <Badge className="bg-orange-400/15 text-orange-400 border-orange-400/30 text-xs mb-3">
+                          Case 3: Good Strength + High Corrosion
+                        </Badge>
+                        <p className="text-muted-foreground text-sm">
+                          {overall.recJustification}
                         </p>
-                        <div className="flex flex-wrap gap-2">
-                          <a
-                            href={TOOL_URLS.frpColumn}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <Button
-                              size="sm"
-                              className="gap-2 bg-primary text-primary-foreground"
-                              data-ocid="assessment.frp_column.button"
-                            >
-                              <Columns className="w-4 h-4" /> Column FRP
-                            </Button>
-                          </a>
-                          <a
-                            href={TOOL_URLS.frpBeam}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <Button
-                              size="sm"
-                              className="gap-2 bg-primary text-primary-foreground"
-                              data-ocid="assessment.frp_beam.button"
-                            >
-                              <Layers className="w-4 h-4" /> Beam FRP
-                            </Button>
-                          </a>
-                        </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              )}
-
-              {recommendation === "surface" && (
-                <Card className="bg-yellow-400/10 border-yellow-400/30 mb-6">
-                  <CardContent className="p-6 flex items-start gap-4">
-                    <AlertTriangle className="w-8 h-8 text-yellow-400 shrink-0 mt-0.5" />
-                    <div>
-                      <h3 className="font-display text-xl font-bold text-yellow-400 mb-1">
-                        Surface Repair + Protective Coating
-                      </h3>
-                      <p className="text-muted-foreground text-sm">
-                        Moderate structural condition with initial corrosion
-                        signs. Surface repair using polymer-modified mortar
-                        followed by application of anti-carbonation protective
-                        coating is recommended. Monitor annually.
-                      </p>
+                    </div>
+                    <Separator className="mb-5 border-orange-400/20" />
+                    <p className="text-sm font-semibold mb-3">
+                      Select Structural Element for FRP Strengthening Design:
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <a
+                        href={TOOL_URLS.frpColumn}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block"
+                      >
+                        <div className="p-4 rounded-lg border border-orange-400/30 bg-orange-400/5 hover:bg-orange-400/10 hover:border-orange-400/50 transition-all cursor-pointer">
+                          <Columns className="w-6 h-6 text-orange-400 mb-2" />
+                          <p className="font-semibold text-sm mb-1">
+                            Column FRP Strengthening
+                          </p>
+                          <p className="text-xs text-muted-foreground mb-3">
+                            FRP confinement design for columns — axial capacity
+                            enhancement and ductility improvement
+                          </p>
+                          <div className="flex items-center gap-1 text-xs text-orange-400 font-medium">
+                            Open Design Module{" "}
+                            <ExternalLink className="w-3 h-3" />
+                          </div>
+                        </div>
+                      </a>
+                      <a
+                        href={TOOL_URLS.frpBeam}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block"
+                      >
+                        <div className="p-4 rounded-lg border border-orange-400/30 bg-orange-400/5 hover:bg-orange-400/10 hover:border-orange-400/50 transition-all cursor-pointer">
+                          <Layers className="w-6 h-6 text-orange-400 mb-2" />
+                          <p className="font-semibold text-sm mb-1">
+                            Beam FRP Strengthening
+                          </p>
+                          <p className="text-xs text-muted-foreground mb-3">
+                            FRP flexural and shear strengthening design for RC
+                            beams with full detailing
+                          </p>
+                          <div className="flex items-center gap-1 text-xs text-orange-400 font-medium">
+                            Open Design Module{" "}
+                            <ExternalLink className="w-3 h-3" />
+                          </div>
+                        </div>
+                      </a>
                     </div>
                   </CardContent>
                 </Card>
