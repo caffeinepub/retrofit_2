@@ -132,16 +132,10 @@ export default function App() {
 
         {/* Footer */}
         <div className="px-5 py-4 border-t border-sidebar-border">
-          <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()}.{" "}
-            <a
-              href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-primary transition-colors"
-            >
-              Built with caffeine.ai
-            </a>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            This software is developed based on the problem statement of
+            structural health assessment and retrofitting of existing RCC
+            structures.
           </p>
         </div>
       </aside>
