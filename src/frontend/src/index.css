@@ -1,0 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Bricolage Grotesque";
+  src: url("/assets/fonts/BricolageGrotesque.woff2") format("woff2");
+  font-weight: 200 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Satoshi";
+  src: url("/assets/fonts/Satoshi.woff2") format("woff2");
+  font-weight: 300 700;
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+    --background: 0.13 0.018 240;
+    --foreground: 0.94 0.008 220;
+    --card: 0.17 0.022 238;
+    --card-foreground: 0.94 0.008 220;
+    --popover: 0.19 0.024 238;
+    --popover-foreground: 0.94 0.008 220;
+    --primary: 0.74 0.17 196;
+    --primary-foreground: 0.1 0.015 240;
+    --secondary: 0.22 0.025 235;
+    --secondary-foreground: 0.85 0.01 220;
+    --muted: 0.2 0.02 237;
+    --muted-foreground: 0.6 0.02 230;
+    --accent: 0.78 0.15 196;
+    --accent-foreground: 0.1 0.015 240;
+    --destructive: 0.65 0.22 25;
+    --destructive-foreground: 0.98 0 0;
+    --border: 0.28 0.025 235;
+    --input: 0.22 0.022 237;
+    --ring: 0.74 0.17 196;
+    --chart-1: 0.74 0.17 196;
+    --chart-2: 0.65 0.2 150;
+    --chart-3: 0.78 0.18 80;
+    --chart-4: 0.7 0.2 260;
+    --chart-5: 0.65 0.22 25;
+    --sidebar: 0.15 0.02 240;
+    --sidebar-foreground: 0.94 0.008 220;
+    --sidebar-primary: 0.74 0.17 196;
+    --sidebar-primary-foreground: 0.1 0.015 240;
+    --sidebar-accent: 0.2 0.022 238;
+    --sidebar-accent-foreground: 0.94 0.008 220;
+    --sidebar-border: 0.25 0.022 238;
+    --sidebar-ring: 0.74 0.17 196;
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Satoshi", "Plus Jakarta Sans", system-ui, sans-serif;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Bricolage Grotesque", "Plus Jakarta Sans", system-ui,
+      sans-serif;
+  }
+}
+
+@layer utilities {
+  .text-gradient-teal {
+    background: linear-gradient(
+      135deg,
+      oklch(0.78 0.18 196),
+      oklch(0.7 0.2 170)
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .glow-teal {
+    box-shadow: 0 0 20px oklch(0.74 0.17 196 / 0.3);
+  }
+  .border-glow {
+    border-color: oklch(0.74 0.17 196 / 0.6);
+    box-shadow: 0 0 0 1px oklch(0.74 0.17 196 / 0.2);
+  }
+}
