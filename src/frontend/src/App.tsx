@@ -133,9 +133,7 @@ export default function App() {
         {/* Footer */}
         <div className="px-5 py-4 border-t border-sidebar-border">
           <p className="text-xs text-muted-foreground leading-relaxed">
-            This software is developed based on the problem statement of
-            structural health assessment and retrofitting of existing RCC
-            structures.
+            This software is developed based on the problem statement.
           </p>
         </div>
       </aside>
